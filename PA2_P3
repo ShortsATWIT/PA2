@@ -1,0 +1,168 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+public class PA2_P3 {
+
+	public static final String ERR_DIMS = "Bad matrix dimensions";
+	public static final String ERR_FILE = "Error opening file(s)";
+	private static void _outputMatrix(PrintWriter out, int[][] m, boolean includeDimensions) {
+	for (int r=0; r<m.length; r++) {
+	if (includeDimensions && r==0) {
+	out.printf("%d%n%d%n", m.length, m[0].length);
+	}
+	for (int c=0; c<m[r].length; c++) {
+	out.printf("%d", m[r][c]);
+	out.printf((c<m[r].length-1)?" ":"%n");
+	}
+	}
+	}
+	/**
+	* Prints a matrix to the terminal
+	* without dimensions
+	*
+	* @param m matrix to print
+	*/
+	public static void printMatrix(int[][] m) {
+	_outputMatrix(new PrintWriter(System.out, true), m, false);
+	}
+	/**
+	* Prints a matrix to a file
+	* with associated dimensions
+	*
+	* @param m matrix to print
+	* @param pw open file
+	*/
+	public static void printMatrix(int[][] m, PrintWriter pw) {
+	_outputMatrix(pw, m, true);
+	}
+	/**
+	* Checks if two matrices can be multiplied
+	* (i.e. the columns of the first match
+	* the rows of the second)
+	*
+	* @param m1 matrix 1
+	* @param m2 matrix 2
+	* @return true if m1 x m2 is legal
+	*/
+	public static boolean canMultiply(int[][] m1, int[][] m2) {
+	if (m1[0].length == m2.length) {
+	return true;
+	}
+	return false;
+	}
+	/**
+	* Reads and returns a matrix from a scanner
+	* Format:
+	* m (# rows)
+	* n (# #cols)
+	* r0c0 r0c1 ... r0cn (values in row 0, column-by-column)
+	* r1c0 r1c1 ... r1cn (values in row 1, column-by-column)
+	* ...
+	* rmc0 rmc1 ... rmcn (values in last row, column-by-column)
+	*
+	* Results in...
+	* int[][] {
+	* {r0c0, r0c1, ... r0cn},
+	* {r1c0, r1c1, ... r1cn},
+	* ...
+	* {rmc0, rmc1, ... rmcn}
+	* }
+	*
+	* @param s input source
+	* @return resulting matrix
+	*/
+	public static int[][] readMatrix(Scanner s) {
+	int[][] ar;
+	int row = 0;
+	int col = 0;
+	String data = "";
+	while (s.hasNext()) {
+	if (row == 0 && col == 0) {
+	row = Integer.parseInt(s.nextLine());
+	col = Integer.parseInt(s.nextLine());
+	}else
+	data += s.nextLine() + "";
+	}
+	int count = 0;
+	String[] str = data.split("");
+	ar = new int[row][col];
+	for (int i = 0; i < row; i++) {
+	for (int j = 0; j < col; j++) {
+	ar[i][j] = Integer.parseInt(str[count]);
+	count++;
+	}
+	}
+	return ar;
+	}
+	/**
+	* Multiply two matrices and
+	* return the result
+	*
+	* @param m1 matrix 1
+	* @param m2 matrix 2
+	* @return result of m1 x m2
+	*/
+	public static int[][] matrixMultiply(int[][] m1, int[][] m2) {
+	if (canMultiply(m1,m2) == false) {
+	System.out.println(ERR_DIMS);
+	System.exit(0);
+	}
+	int sum = 0;
+	int[][] multiply = new int[m1.length][m2[0].length];
+	for (int i = 0; i < m1.length; i++) {
+	for (int j = 0; j < m2[0].length; j++) {
+	for (int k = 0; k < m2.length; k++) {
+	sum += m1[i][k] * m2[k][j];
+	}
+	multiply[i][j] = sum;
+	sum = 0;
+	}
+	}
+	return multiply;
+	}
+	/**
+	* Program to multiply matrices:
+	* 1. Ask for paths for 3 files (2 input, 1 output)
+	* 2. Check if inputs can be multiplied
+	* 3. If so, multiply!
+	* - Output the full problem to the console
+	* - Output only the result matrix to the file
+	*
+	* @param args command-line arguments, ignored
+	*/
+	public static void main(String[] args) {
+	// Hint: paths should be read as an entire line!
+	Scanner input = new Scanner(System.in);
+	int[][] m1, m2, result;
+	String f1, f2, r;
+	try {
+	System.out.print("Enter path for matrix 1: ");
+	f1 = input.nextLine();
+	System.out.print("Enter path for matrix 2: ");
+	f2 = input.nextLine();
+	System.out.print("Enter path for result: ");
+	r = input.nextLine();
+	input.close();
+	Scanner file1 = new Scanner(new File(f1));
+	Scanner file2 = new Scanner(new File(f2));
+	PrintWriter pw = new PrintWriter(new File(r));
+	m1 = readMatrix(file1);
+	m2 = readMatrix(file2);
+	printMatrix(m1);
+	System.out.println("X");
+	printMatrix(m2);
+	System.out.println("=");
+	result = matrixMultiply(m1, m2);
+	printMatrix(result);
+	printMatrix(result, pw);
+	file1.close();
+	file2.close();
+	pw.close();
+	}
+	catch (FileNotFoundException e) {
+	System.out.println(ERR_FILE);
+	}
+	}
+	}
