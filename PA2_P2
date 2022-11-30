@@ -1,0 +1,70 @@
+import java.util.Scanner;
+
+public class PAP2 {
+	/**
+	* Error to supply if input is not positive
+	*/
+	public static final String ERR_VALUES = "Number of values must be positive.";
+	/**
+	* Returns true if the supplied array has a
+	* sequence of k consecutive values
+	*
+	* @param values input array
+	* @param k sequence length for which to search
+	* @return true if values has a consecutive sequence of at least k
+	*/
+	public static boolean hasConsecutive(int[] values, int k) {
+	int len = 1;
+	for(int i = 0; i < values.length - 1; i++){
+	if(values[i] == values[i + 1])
+	len++;
+	else
+	len = 1;
+	if(len == k)
+	return true;
+	}
+	return false;
+	}
+	/**
+	* Returns the length of the longest
+	* consecutive sequence in the supplied
+	* array
+	*
+	* @param values input array
+	* @return length of the longest consecutive value sequence in values
+	*/
+	public static int maxConsecutive(int[] values) {
+	// Hint: hasConsecutive could
+	// be very useful here
+	for(int i = values.length - 1; i > 0; i--){
+	if(hasConsecutive(values,i))
+	return i;
+	}
+	return 0;
+	}
+	/**
+	* Inputs an array of numbers
+	* and outputs the longest consecutive
+	* sequence of values
+	*
+	* @param args command-line arguments, ignored
+	*/
+	public static void main(String[] args) {
+	// Hint: useful methods and constants here
+	// - maxConsecutive
+	// - ERR_VALUES
+	Scanner s = new Scanner(System.in);
+	System.out.print("Enter the number of values: ");
+	int n = s.nextInt();
+	while(n<0){
+	System.out.println(ERR_VALUES);
+	System.out.print("Enter the number of values: ");
+	n = s.nextInt();
+	}
+	System.out.print("Enter the values: ");
+	int arr[]=new int[n];
+	for(int i=0;i<n;i++)
+	arr[i]=s.nextInt();
+	System.out.println("The maximum length of consecutive values is " + maxConsecutive(arr));
+	}
+	}
